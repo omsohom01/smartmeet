@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMeet - AI-Powered Meeting Platform</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <h1 id="smartmeet-logo">SmartMeet</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="login.html" class="login-btn">Login</a></li>
+                <li><a href="signup.html" class="signup-btn">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Never Miss Important Meeting Details Again</h1>
+                <p>Experience smart meetings with AI-powered summarization. Get comprehensive PDF summaries of every
+                    meeting automatically.</p>
+                <div class="cta-buttons">
+                    <button class="start-meeting">Start Meeting</button>
+                    <button class="join-meeting">Join Meeting</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-video"></i>
+                    <h3>HD Video Conferencing</h3>
+                    <p>Crystal clear video calls with support for multiple participants</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Summarization</h3>
+                    <p>Automatic meeting summaries powered by advanced AI</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-file-pdf"></i>
+                    <h3>PDF Reports</h3>
+                    <p>Get formatted PDF summaries right after your meeting</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cloud"></i>
+                    <h3>Cloud Storage</h3>
+                    <p>Access your meeting recordings and summaries anytime</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <!-- Step 1: Schedule or Start a Meeting -->
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 16 16" fill="none" stroke="#4f46e5"
+                            stroke-linecap="round" stroke-linejoin="round" height="60" width="60">
+                            <path d="M5 1.25v2.5" stroke-width="1"></path>
+                            <path d="M10 1.25v2.5" stroke-width="1"></path>
+                            <path
+                                d="M3.125 2.5h8.75s1.25 0 1.25 1.25v8.75s0 1.25 -1.25 1.25H3.125s-1.25 0 -1.25 -1.25V3.75s0 -1.25 1.25 -1.25"
+                                stroke-width="1"></path>
+                            <path d="M1.875 6.25h11.25" stroke-width="1"></path>
+                        </svg>
+                    </div>
+                    <h3>Schedule or Start a Meeting</h3>
+                    <p>Instantly create or schedule a meeting with just one click.</p>
+                </div>
+
+                <!-- Step 2: Conduct Your Meeting -->
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#4f46e5" class="bi bi-people" viewBox="0 0 16 16"
+                            height="60" width="60">
+                            <path
+                                d="M15 14s1 0 1 -1 -1 -4 -5 -4 -5 3 -5 4 1 1 1 1zm-7.978 -1L7 12.996c0.001 -0.264 0.167 -1.03 0.76 -1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687 0.63 3.24 1.276 0.593 0.69 0.758 1.457 0.76 1.72l-0.008 0.002 -0.014 0.002zM11 7a2 2 0 1 0 0 -4 2 2 0 0 0 0 4m3 -2a3 3 0 1 1 -6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0 -1.23 -0.247A7 7 0 0 0 5 9c-4 0 -5 3 -5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0 -1.01 0.377 -2.042 1.09 -2.904 0.243 -0.294 0.526 -0.569 0.846 -0.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0 -0.26 0.164 -1.03 0.76 -1.724 0.545 -0.636 1.492 -1.256 3.16 -1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1 -6 0m3 -2a2 2 0 1 0 0 4 2 2 0 0 0 0 -4"
+                                stroke-width="1"></path>
+                        </svg>
+                    </div>
+                    <h3>Conduct Your Meeting</h3>
+                    <p>Engage in seamless discussions while AI records key details.</p>
+                </div>
+
+                <!-- Step 3: Get Your Summary -->
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <svg fill="#4f46e5" height="64px" width="64px" version="1.1" id="Layer_1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0 0 512.001 512.001" xml:space="preserve" stroke="#4f46e5"
+                            stroke-width="8.192015999999999">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"
+                                stroke="#CCCCCC" stroke-width="14.336028000000002"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <g>
+                                        <path
+                                            d="M463.996,126.864L340.192,3.061C338.231,1.101,335.574,0,332.803,0H95.726C67.724,0,44.944,22.782,44.944,50.784v410.434 c0,28.001,22.781,50.783,50.783,50.783h320.547c28.002,0,50.783-22.781,50.783-50.783V134.253 C467.056,131.482,465.955,128.824,463.996,126.864z M343.255,35.679l88.127,88.126H373.14c-7.984,0-15.49-3.109-21.134-8.753 c-5.643-5.643-8.752-13.148-8.751-21.131V35.679z M446.158,461.217c0,16.479-13.406,29.885-29.884,29.885H95.726 c-16.479,0-29.885-13.406-29.885-29.885V50.784c0.001-16.479,13.407-29.886,29.885-29.886h226.631v73.021 c-0.002,13.565,5.28,26.318,14.871,35.909c9.592,9.592,22.345,14.874,35.911,14.874h73.018V461.217z">
+                                        </path>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path
+                                            d="M275.092,351.492h-4.678c-5.77,0-10.449,4.678-10.449,10.449s4.679,10.449,10.449,10.449h4.678 c5.77,0,10.449-4.678,10.449-10.449S280.862,351.492,275.092,351.492z">
+                                        </path>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path
+                                            d="M236.61,351.492H135.118c-5.77,0-10.449,4.678-10.449,10.449s4.679,10.449,10.449,10.449H236.61 c5.77,0,10.449-4.678,10.449-10.449S242.381,351.492,236.61,351.492z">
+                                        </path>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path
+                                            d="M376.882,303.747H135.119c-5.77,0-10.449,4.678-10.449,10.449c0,5.771,4.679,10.449,10.449,10.449h241.763 c5.77,0,10.449-4.678,10.449-10.449C387.331,308.425,382.652,303.747,376.882,303.747z">
+                                        </path>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path
+                                            d="M376.882,256H135.119c-5.77,0-10.449,4.678-10.449,10.449c0,5.771,4.679,10.449,10.449,10.449h241.763 c5.77,0,10.449-4.678,10.449-10.449C387.331,260.678,382.652,256,376.882,256z">
+                                        </path>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path
+                                            d="M376.882,208.255H135.119c-5.77,0-10.449,4.678-10.449,10.449c0,5.771,4.679,10.449,10.449,10.449h241.763 c5.77,0,10.449-4.678,10.449-10.449S382.652,208.255,376.882,208.255z">
+                                        </path>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <h3>Get Your Summary</h3>
+                    <p>Receive a structured, AI-generated summary in PDF format.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="pricing" class="pricing">
+            <h2>Pricing Plans</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Basic</h3>
+                    <i class="fas fa-gift fa-3x mb-3"></i>
+                    <p class="price">Free</p>
+                    <ul>
+                        <li>Up to 10 participants</li>
+                        <li>2-hours meetings</li>
+                        <li>Basic AI summaries</li>
+                        <li>24-hour storage</li>
+                    </ul>
+                    <button id="basic-get-started" class="select-plan">Get Started</button>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Pro</h3>
+                    <i class="fas fa-star fa-3x mb-3"></i>
+                    <p class="price">$15/month</p>
+                    <ul>
+                        <li>Up to 50 participants</li>
+                        <li>5-hour meetings</li>
+                        <li>Advanced AI summaries</li>
+                        <li>30-day storage</li>
+                    </ul>
+                    <button class="select-plan">Choose Pro</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <i class="fas fa-crown fa-3x mb-3"></i>
+                    <p class="price">Custom</p>
+                    <ul>
+                        <li>Unlimited participants</li>
+                        <li>Unlimited duration</li>
+                        <li>Custom AI models</li>
+                        <li>Unlimited storage</li>
+                    </ul>
+                    <button class="select-plan">Contact Us</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">GDPR</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 SmartMeet. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>
