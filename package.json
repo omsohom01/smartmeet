@@ -12,7 +12,16 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "socket.io": "^4.8.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omsohom01/smartmeet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/omsohom01/smartmeet/issues"
+  },
+  "homepage": "https://github.com/omsohom01/smartmeet#readme"
 }

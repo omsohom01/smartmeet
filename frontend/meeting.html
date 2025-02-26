@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,27 +8,20 @@
     <link rel="stylesheet" href="styles/meeting.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
-
 <body>
     <div class="meeting-container">
         <header class="meeting-header">
             <div class="meeting-info">
                 <h1 class="meeting-title">Meeting Room</h1>
                 <div id="meeting-id"></div>
-                <div id="meeting-timer">00:00:00</div> <!-- Add this line for the timer -->
+                <div id="meeting-timer">00:00:00</div>
             </div>
             <div class="meeting-controls-top">
                 <button id="toggle-summary" class="control-button">
                     <i class="fas fa-file-alt"></i>
                     <span>Toggle Summary</span>
                 </button>
-                <!-- <button id="end-meeting" class="control-button danger">
-                    <i class="fas fa-phone-slash"></i>
-                    <span>End Meeting</span>
-                </button> -->
             </div>
         </header>
 
@@ -103,22 +95,10 @@
                     <i class="fas fa-phone-slash"></i>
                     <span>End Meeting</span>
                 </button>
-                <button id="toggle-speech" class="control-button">
-                    <i class="fas fa-microphone-alt"></i>
-                    <span>Start Speech Recognition</span>
-                </button>
             </div>
-
-            <!-- Add this div to display the transcript -->
-            <div id="caption"
-                style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 10px; border-radius: 5px;">
-            </div>
-
         </footer>
     </div>
 
     <script src="scripts/meeting.js"></script>
-    <script src="scripts/summarization.js"></script>
 </body>
-
 </html>

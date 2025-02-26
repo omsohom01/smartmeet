@@ -9,10 +9,13 @@ let screenStream;
 let remoteStreams = {};
 let peerConnections = {};
 
+// Get meeting ID from the URL
 const meetingId = new URLSearchParams(window.location.search).get("meetingId");
 
 // Add Socket.IO connection here
-const socket = io.connect("http://localhost:8082");
+const socket = io.connect("http://localhost:8081", {
+    withCredentials: true,
+});
 
 socket.on("connect", () => {
     console.log("Connected to signaling server");
@@ -23,11 +26,6 @@ socket.on("message", (message) => {
     // Handle signaling messages (e.g., offers, answers, ICE candidates)
 });
 
-socket.on("disconnect", () => {
-    alert("Disconnected from the signaling server. Please refresh the page.");
-    window.location.href = "index.html";
-});
-
 async function initializeMeeting() {
     if (!meetingId) {
         alert("Invalid meeting ID");
@@ -36,10 +34,42 @@ async function initializeMeeting() {
     }
 
     document.getElementById("meeting-id").innerText = `Meeting ID: ${meetingId}`;
-    await setupLocalStream();
-    setupSocketListeners();
-    setupMeetingControls();
-    adjustGridLayout();
+
+    try {
+        await setupLocalStream();
+        setupSocketListeners();
+        adjustGridLayout();
+    } catch (error) {
+        console.error("Failed to initialize meeting:", error);
+        showErrorUI();
+    }
+}
+
+function showErrorUI() {
+    const errorDiv = document.createElement("div");
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ff4444;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        z-index: 1000;
+    `;
+    errorDiv.innerHTML = `
+        <p>Failed to initialize meeting. Please check:</p>
+        <ul>
+            <li>Camera/microphone permissions</li>
+            <li>Internet connection</li>
+            <li>Meeting ID validity</li>
+        </ul>
+        <button onclick="window.location.reload()" style="margin-top: 10px;">
+            Try Again
+        </button>
+    `;
+    document.body.appendChild(errorDiv);
 }
 
 function startMeetingTimer() {
@@ -61,14 +91,10 @@ async function setupLocalStream() {
     try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         document.getElementById("local-video").srcObject = localStream;
-        console.log("Local stream initialized successfully");
-
-        // Ensure the user joins the meeting properly
         socket.emit("join-meeting", { meetingId });
     } catch (error) {
-        console.error("Error accessing media devices.", error);
-        alert("Unable to access your camera and microphone. Please check your permissions and try again.");
-        window.location.href = "index.html"; // Redirect to home page
+        console.error("Error accessing media devices:", error);
+        throw error; // Propagate the error to initializeMeeting
     }
 }
 
@@ -105,12 +131,6 @@ async function shareScreenWithCam() {
 
         socket.emit("start-screen-share", { meetingId });
 
-        // Add screen share indicator
-        const screenShareIndicator = document.createElement("div");
-        screenShareIndicator.innerText = "Screen Sharing Active";
-        screenShareIndicator.style.cssText = "position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.7); color: white; padding: 5px; border-radius: 5px;";
-        document.querySelector(".meeting-container").appendChild(screenShareIndicator);
-
     } catch (err) {
         console.error("Error sharing screen:", err);
         alert("Screen sharing failed. Please check browser permissions.");
@@ -123,66 +143,108 @@ function stopScreenShare() {
         document.getElementById(`screen-share-${meetingId}`)?.remove();
         document.querySelector(".meeting-container").classList.remove("screen-sharing-active");
         console.log("Screen sharing stopped.");
-
-        // Remove screen share indicator
-        document.querySelector(".meeting-container .screen-share-indicator")?.remove();
     }
 }
 
 function setupSocketListeners() {
-    socket.on("user-joined", userId => {
+    // Handle existing users in the room when a new user joins
+    socket.on('existing-users', (users) => {
+        console.log('Existing users in the room:', users);
+        users.forEach(userId => {
+            if (userId !== socket.id) { // Avoid creating a connection with yourself
+                createPeerConnection(userId);
+            }
+        });
+    });
+
+    // Handle new users joining the room
+    socket.on('user-joined', (userId) => {
         console.log(`User joined: ${userId}`);
-        createPeerConnection(userId);
+        if (userId !== socket.id) { // Avoid creating a connection with yourself
+            createPeerConnection(userId);
+            adjustGridLayout();
+        }
+    });
+
+    // Handle users leaving the room
+    socket.on('user-left', (userId) => {
+        console.log(`User left: ${userId}`);
+        if (peerConnections[userId]) {
+            peerConnections[userId].close();
+            delete peerConnections[userId];
+        }
+        if (remoteStreams[userId]) {
+            remoteStreams[userId].getTracks().forEach(track => track.stop());
+            delete remoteStreams[userId];
+        }
+        document.getElementById(`video-${userId}`)?.remove();
         adjustGridLayout();
     });
 
+    // Handle incoming offers from other peers
     socket.on("offer", async ({ userId, offer }) => {
+        console.log(`Received offer from user: ${userId}`);
         if (!peerConnections[userId]) {
             createPeerConnection(userId);
         }
 
-        await peerConnections[userId].setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await peerConnections[userId].createAnswer();
-        await peerConnections[userId].setLocalDescription(answer);
-        socket.emit("answer", { userId, answer: peerConnections[userId].localDescription });
+        try {
+            await peerConnections[userId].setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnections[userId].createAnswer();
+            await peerConnections[userId].setLocalDescription(answer);
+            socket.emit("answer", { userId, answer: peerConnections[userId].localDescription });
+            console.log(`Sent answer to user: ${userId}`);
+        } catch (error) {
+            console.error("Error handling offer:", error);
+        }
     });
 
+    // Handle incoming answers from other peers
     socket.on("answer", ({ userId, answer }) => {
-        peerConnections[userId].setRemoteDescription(new RTCSessionDescription(answer));
+        console.log(`Received answer from user: ${userId}`);
+        if (peerConnections[userId]) {
+            peerConnections[userId].setRemoteDescription(new RTCSessionDescription(answer))
+                .catch(error => console.error("Error setting remote description:", error));
+        }
     });
 
+    // Handle incoming ICE candidates from other peers
     socket.on("candidate", ({ userId, candidate }) => {
-        peerConnections[userId].addIceCandidate(new RTCIceCandidate(candidate));
+        console.log(`Received ICE candidate from user: ${userId}`);
+        if (peerConnections[userId]) {
+            peerConnections[userId].addIceCandidate(new RTCIceCandidate(candidate))
+                .catch(error => console.error("Error adding ICE candidate:", error));
+        }
     });
 }
 
 function createPeerConnection(userId) {
+    console.log(`Creating peer connection with user: ${userId}`);
+
     const peerConnection = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }] // Use Google's public STUN server
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
 
-    // Add local stream tracks to the connection
+    // Add local tracks to the connection
     localStream.getTracks().forEach(track => {
-        console.log(`Adding local track: ${track.kind}`);
+        console.log(`Adding local track (${track.kind}) to peer connection`);
         peerConnection.addTrack(track, localStream);
     });
 
-    // Handle remote stream
+    // Handle remote tracks
     peerConnection.ontrack = (event) => {
-        console.log(`ontrack fired for user: ${userId}`);
-        console.log(`Received track kind: ${event.track.kind}`);
-        console.log(`Number of streams: ${event.streams.length}`);
-
+        console.log(`Received remote track from user: ${userId}`);
         if (!remoteStreams[userId]) {
             remoteStreams[userId] = new MediaStream();
         }
+        event.streams[0].getTracks().forEach(track => {
+            console.log(`Adding remote track (${track.kind}) to remote stream`);
+            remoteStreams[userId].addTrack(track);
+        });
 
-        remoteStreams[userId].addTrack(event.track);
-        console.log(`Added track to remote stream for user: ${userId}`);
-
+        // Create or update the video element for the remote user
         let remoteVideo = document.getElementById(`video-${userId}`);
         if (!remoteVideo) {
-            console.log(`Creating new video element for user: ${userId}`);
             remoteVideo = document.createElement("video");
             remoteVideo.id = `video-${userId}`;
             remoteVideo.autoplay = true;
@@ -192,7 +254,7 @@ function createPeerConnection(userId) {
         }
 
         remoteVideo.srcObject = remoteStreams[userId];
-        console.log(`Updated video element source for user: ${userId}`);
+        console.log(`Updated video element for user: ${userId}`);
 
         adjustGridLayout();
     };
@@ -207,7 +269,7 @@ function createPeerConnection(userId) {
 
     peerConnections[userId] = peerConnection;
 
-    // Send an offer to the new user
+    // Create and send an offer
     peerConnection.createOffer()
         .then(offer => {
             console.log(`Created offer for user: ${userId}`);
@@ -220,6 +282,19 @@ function createPeerConnection(userId) {
         .catch(error => {
             console.error("Error creating/sending offer:", error);
         });
+}
+function cleanupPeerConnection(userId) {
+    console.log(`Cleaning up peer connection for user: ${userId}`);
+    if (peerConnections[userId]) {
+        peerConnections[userId].close();
+        delete peerConnections[userId];
+    }
+    if (remoteStreams[userId]) {
+        remoteStreams[userId].getTracks().forEach(track => track.stop());
+        delete remoteStreams[userId];
+    }
+    document.getElementById(`video-${userId}`)?.remove();
+    adjustGridLayout();
 }
 
 function setupMeetingControls() {
@@ -283,22 +358,30 @@ function endMeeting() {
 
 let resizeTimeout;
 function adjustGridLayout() {
-    if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
+    console.log("Adjusting grid layout...");
+
+    // Get all video elements in the participants grid
+    const participants = document.querySelectorAll(".participants-grid video");
+    const grid = document.querySelector(".participants-grid");
+
+    // Calculate the number of participants
+    const numParticipants = participants.length;
+
+    // If there are no participants, reset the grid layout
+    if (numParticipants === 0) {
+        grid.style.gridTemplateColumns = "1fr";
+        grid.style.gridTemplateRows = "1fr";
+        console.log("No participants found. Reset grid layout.");
+        return;
     }
-    resizeTimeout = setTimeout(() => {
-        const participants = document.querySelectorAll(".participants-grid video");
-        const grid = document.querySelector(".participants-grid");
 
-        // Calculate the number of columns based on the number of participants
-        const numParticipants = participants.length;
-        const numColumns = Math.ceil(Math.sqrt(numParticipants));
-        const numRows = Math.ceil(numParticipants / numColumns);
+    // Calculate the number of rows and columns for the grid
+    const numColumns = Math.ceil(Math.sqrt(numParticipants));
+    const numRows = Math.ceil(numParticipants / numColumns);
 
-        // Update the grid layout
-        grid.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
-        grid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
+    // Set the grid template columns and rows
+    grid.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
+    grid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
 
-        console.log(`Adjusted grid layout for ${numParticipants} participants`);
-    }, 100); // Debounce time in milliseconds
-}   
+    console.log(`Adjusted grid layout for ${numParticipants} participants: ${numColumns} columns x ${numRows} rows`);
+}

@@ -39,25 +39,3 @@ function smoothScroll(event) {
         });
     }
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("basic-get-started").addEventListener("click", function () {
-        let startMeetingButton = document.querySelector(".start-meeting");
-        if (startMeetingButton) {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-    });
-});
-
-document.getElementById("smartmeet-logo").addEventListener("click", function () {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-});
-
-
-
